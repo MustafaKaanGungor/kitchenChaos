@@ -1,19 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public event EventHandler OnSelectedCounterChanged;
     [SerializeField] GameInput gameInput;
+    
     [SerializeField] private float moveSpeed = 10;
     [SerializeField] private float turnSpeed = 10;
     [SerializeField] private float interactionRange = 2f;
+    [SerializeField] private LayerMask counterLayerMask;
+
     private float playerRadius = 0.7f;
     private float playerHeight = 5f;
+    
     private Vector3 lastInteractDir;
+    private ClearCounter selectedCounter;
+    
     private bool isWalking;
 
-
+    private void Start() {
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
 
     private void Update()
     {
@@ -63,10 +74,25 @@ public class Player : MonoBehaviour
         if(moveDir != Vector3.zero) {
             lastInteractDir = moveDir;
         }
-        Physics.Raycast(transform.position, lastInteractDir, out RaycastHit hit, interactionRange);
+        Physics.Raycast(transform.position, lastInteractDir, out RaycastHit hit, interactionRange, counterLayerMask);
 
         if(hit.collider) {
-            Debug.Log(hit.transform);
+            if(hit.collider.TryGetComponent<ClearCounter>(out ClearCounter clearCounter)) {
+                if(clearCounter != selectedCounter) {
+                    selectedCounter = clearCounter;
+                }
+            } else {
+                selectedCounter = null;
+            }
+        } else {
+            selectedCounter = null;
+        }
+    }
+
+    private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
+        
+        if(selectedCounter != null) {
+            selectedCounter.Interact();
         }
     }
 }
