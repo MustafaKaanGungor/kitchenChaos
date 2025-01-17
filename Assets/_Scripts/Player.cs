@@ -1,12 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    public event EventHandler OnSelectedCounterChanged;
+    public static Player Instance {get; private set;}
+
+    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged; 
+    public class OnSelectedCounterChangedEventArgs : EventArgs {
+        public ClearCounter selectedCounter;
+    }
+
     [SerializeField] GameInput gameInput;
     
     [SerializeField] private float moveSpeed = 10;
@@ -21,6 +28,10 @@ public class Player : MonoBehaviour
     private ClearCounter selectedCounter;
     
     private bool isWalking;
+
+    private void Awake() {
+        Instance = this;
+    }
 
     private void Start() {
         gameInput.OnInteractAction += GameInput_OnInteractAction;
@@ -79,13 +90,13 @@ public class Player : MonoBehaviour
         if(hit.collider) {
             if(hit.collider.TryGetComponent<ClearCounter>(out ClearCounter clearCounter)) {
                 if(clearCounter != selectedCounter) {
-                    selectedCounter = clearCounter;
+                    SetSelectedCounter(clearCounter);
                 }
             } else {
-                selectedCounter = null;
+                SetSelectedCounter(null);
             }
         } else {
-            selectedCounter = null;
+            SetSelectedCounter(null);
         }
     }
 
@@ -94,5 +105,13 @@ public class Player : MonoBehaviour
         if(selectedCounter != null) {
             selectedCounter.Interact();
         }
+    }
+
+    private void SetSelectedCounter(ClearCounter selectedCounter) {
+        this.selectedCounter = selectedCounter;
+
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs{
+           selectedCounter = selectedCounter
+        });
     }
 }
