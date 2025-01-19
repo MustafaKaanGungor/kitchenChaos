@@ -39,6 +39,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void Start() {
         gameInput.OnInteractAction += GameInput_OnInteractAction;
+        gameInput.OnAltInteractAction += GameInput_OnAltInteractAction;
     }
 
     private void Update()
@@ -61,13 +62,13 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         if(!canMove) {
             //attemp moving to x axis
             Vector3 moveDirX = new Vector3(movementVector.x, 0,0).normalized;
-            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
+            canMove = moveDir.x != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
             
             if(canMove) {
                 moveDir = moveDirX;
             } else {
                 Vector3 moveDirZ = new Vector3(0,0,movementVector.y).normalized;
-                canMove =! Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirZ, moveDistance);
+                canMove = moveDir.y != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirZ, moveDistance);
                 
                 if(canMove) {
                     moveDir = moveDirZ;
@@ -109,6 +110,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         if(selectedCounter != null) {
             selectedCounter.Interact(this);
         }
+    }
+
+    private void GameInput_OnAltInteractAction(object sender, EventArgs e)
+    {
+        selectedCounter.AltInteract(this);
     }
 
     private void SetSelectedCounter(BaseCounter selectedCounter) {

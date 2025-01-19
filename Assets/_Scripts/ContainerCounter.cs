@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class ContainerCounter : BaseCounter
 {
-    [SerializeField] private KitchenObjectSO tomatoSO;
+    [SerializeField] private KitchenObjectSO kitchenObjectSO;
 
     public override void Interact(Player player) {
-        if(HasKitchenObject()) {
-            Transform kitchenObjectTransform = Instantiate(tomatoSO.prefab);
-            kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
+        if(!HasKitchenObject() && !player.HasKitchenObject()) {
+            KitchenObject.CreateKitchenObject(kitchenObjectSO, player);
         }
     }
 
