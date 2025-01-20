@@ -14,6 +14,7 @@ public class CuttingCounter : BaseCounter
 
     private int cuttingProcess;
     private int cutAmount;
+    [SerializeField] private Animator animator;
     public override void Interact(Player player)
     {
         if(!HasKitchenObject()) {
@@ -42,6 +43,7 @@ public class CuttingCounter : BaseCounter
                 return;
             }
             cuttingProcess++;
+            animator.SetTrigger("Cut");
             OnProcessChanged?.Invoke(this, new OnProgressChangedEventArgs() {
                 progressNormalized = (float) cuttingProcess/GetCuttingRecipeWithInput(GetKitchenObject().GetKitchenObjectSO()).cuttingAmount
             });

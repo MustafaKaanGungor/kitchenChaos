@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 2368832498230407380}
   - component: {fileID: 3509719805793918871}
   - component: {fileID: 4045881943814791705}
+  - component: {fileID: 2139406006642328403}
   m_Layer: 5
   m_Name: ProgressBarUI
   m_TagString: Untagged
@@ -209,6 +210,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cuttingCounter: {fileID: 3292391567697605724}
   progressbar: {fileID: 7748133528792774332}
+--- !u!114 &2139406006642328403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180525976986688319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcfc79021925a0c4b9c1d69fc7a79794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 2
 --- !u!1 &9071042212803723306
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,7 +293,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -352,6 +366,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d72bee846803d074784ffb8f64e993ca, type: 3}
+--- !u!95 &464085928368995571 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2831942792982843299, guid: d72bee846803d074784ffb8f64e993ca,
+    type: 3}
+  m_PrefabInstance: {fileID: 2395307273255170896}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2201174183682365435 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4589716710238282923, guid: d72bee846803d074784ffb8f64e993ca,
@@ -465,6 +485,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1250c88ddebf72f43bfcd88d99e42eeb, type: 2}
   - {fileID: 11400000, guid: fa3f3f68cbef633468b368b25a7efc44, type: 2}
   - {fileID: 11400000, guid: e4580181029a9694ea6a1277e3091eb8, type: 2}
+  animator: {fileID: 464085928368995571}
 --- !u!4 &483827029221609965 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3678638612537180739, guid: 20133043adefa2142a924798d8934eab,
