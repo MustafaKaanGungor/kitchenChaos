@@ -1,57 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StoveCounter : BaseCounter
 {
-    private enum State {
-        Idle,
-        Cooking,
-        Cooked,
-        Burned
-    }
 
     [SerializeField] private CookingRecipeSO[] cookingRecipes;
     private float cookingProcess = 0f;
     private CookingRecipeSO cookingRecipeSO;
-    private State currentState;
-    private void Start() {
-        currentState = State.Idle;
-    }
+    [SerializeField] GameObject oilEffect;
+    [SerializeField] GameObject fireEffect;
+    [SerializeField] private Image progressBar;
+    [SerializeField] private GameObject UIelement;
+
     private void Update() {
-        if(HasKitchenObject()) {
-            switch (currentState)
-            {
-                case State.Idle:
-                case State.Cooking:
-                    cookingProcess += Time.deltaTime;
-                    if(cookingRecipeSO != null) {
-                        if(cookingProcess >= cookingRecipeSO.cookingTimerMax) {
-                            GetKitchenObject().DestroySelf();
+        if(HasKitchenObject() && cookingRecipeSO != null) {
+            cookingProcess += Time.deltaTime;
+            progressBar.fillAmount = cookingProcess/cookingRecipeSO.cookingTimerMax;
+            CookingEffects(true);
+            if(cookingProcess >= cookingRecipeSO.cookingTimerMax) {
+                GetKitchenObject().DestroySelf();
                     
-                            KitchenObject.CreateKitchenObject(cookingRecipeSO.output, this);
-                            
-                            currentState = State.Cooked;
-                        }
-                    }
-                    break;
-                case State.Cooked:
-                    cookingProcess += Time.deltaTime;
-                    if(cookingRecipeSO != null) {
-                        if(cookingProcess >= cookingRecipeSO.cookingTimerMax) {
-                            GetKitchenObject().DestroySelf();
+                KitchenObject.CreateKitchenObject(cookingRecipeSO.output, this);
                     
-                            KitchenObject.CreateKitchenObject(cookingRecipeSO.output, this);
-                            
-                            currentState = State.Cooked;
-                        }
-                    }
-                    break;
-                case State.Burned:
-                    break;
-                default:
-                    break;
-            }  
+                cookingRecipeSO = GetCookingRecipeWithInput(GetKitchenObject().GetKitchenObjectSO());
+                cookingProcess = 0f;
+                CookingEffects(false);
+            }
         }
     }
     public override void Interact(Player player)
@@ -60,7 +36,6 @@ public class StoveCounter : BaseCounter
             if(player.HasKitchenObject()) {
                 if(HasRecipeWithOutput(player.GetKitchenObject().GetKitchenObjectSO())){
                     player.GetKitchenObject().SetKitchenObjectParent(this);
-                    currentState = State.Cooking;
                     cookingRecipeSO = GetCookingRecipeWithInput(GetKitchenObject().GetKitchenObjectSO());
                     cookingProcess = 0f;
                 }
@@ -69,6 +44,7 @@ public class StoveCounter : BaseCounter
             if(!player.HasKitchenObject()) {
                 GetKitchenObject().SetKitchenObjectParent(player);
                 cookingProcess = 0f;
+                CookingEffects(false);
             }
         }
     }
@@ -98,5 +74,11 @@ public class StoveCounter : BaseCounter
             }
         }
         return null;
+    }
+
+    private void CookingEffects(bool state) {
+        oilEffect.SetActive(state);
+        fireEffect.SetActive(state);
+        UIelement.SetActive(state);
     }
 }
