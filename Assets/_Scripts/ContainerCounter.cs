@@ -11,6 +11,14 @@ public class ContainerCounter : BaseCounter
         if(!HasKitchenObject() && !player.HasKitchenObject()) {
             KitchenObject.CreateKitchenObject(kitchenObjectSO, player);
             animator.SetTrigger("OpenClose");
+        } else {
+            if(player.HasKitchenObject()) {
+                if(player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
+                    if(plateKitchenObject.TryAddIngredient(kitchenObjectSO)) {
+                        animator.SetTrigger("OpenClose");
+                    }
+                }
+            }
         }
     }
 

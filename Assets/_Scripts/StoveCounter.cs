@@ -45,6 +45,14 @@ public class StoveCounter : BaseCounter
                 GetKitchenObject().SetKitchenObjectParent(player);
                 cookingProcess = 0f;
                 CookingEffects(false);
+            } else {
+                if(player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
+                    if(plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO())) {
+                        GetKitchenObject().DestroySelf();
+                        cookingProcess = 0f;
+                        CookingEffects(false);
+                    }
+                }
             }
         }
     }
