@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,10 @@ using UnityEngine.UI;
 
 public class StoveCounter : BaseCounter
 {
-
+    public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
+    public class OnStateChangedEventArgs : EventArgs {
+        public bool isCooking;
+    }
     [SerializeField] private CookingRecipeSO[] cookingRecipes;
     private float cookingProcess = 0f;
     private CookingRecipeSO cookingRecipeSO;
@@ -19,6 +23,9 @@ public class StoveCounter : BaseCounter
             cookingProcess += Time.deltaTime;
             progressBar.fillAmount = cookingProcess/cookingRecipeSO.cookingTimerMax;
             CookingEffects(true);
+            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs{
+                isCooking = true
+            });
             if(cookingProcess >= cookingRecipeSO.cookingTimerMax) {
                 GetKitchenObject().DestroySelf();
                     
@@ -27,6 +34,9 @@ public class StoveCounter : BaseCounter
                 cookingRecipeSO = GetCookingRecipeWithInput(GetKitchenObject().GetKitchenObjectSO());
                 cookingProcess = 0f;
                 CookingEffects(false);
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs{
+                    isCooking = false
+                });
             }
         }
     }
@@ -45,12 +55,18 @@ public class StoveCounter : BaseCounter
                 GetKitchenObject().SetKitchenObjectParent(player);
                 cookingProcess = 0f;
                 CookingEffects(false);
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs{
+                    isCooking = false
+                });
             } else {
                 if(player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
                     if(plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO())) {
                         GetKitchenObject().DestroySelf();
                         cookingProcess = 0f;
                         CookingEffects(false);
+                        OnStateChanged?.Invoke(this, new OnStateChangedEventArgs{
+                            isCooking = false
+                        });
                     }
                 }
             }

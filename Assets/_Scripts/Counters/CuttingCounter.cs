@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CuttingCounter : BaseCounter
 {
+    public static event EventHandler OnAnyCut;
     public event EventHandler<OnProgressChangedEventArgs> OnProcessChanged;
     public class OnProgressChangedEventArgs : EventArgs {
         public float progressNormalized;
@@ -50,6 +51,7 @@ public class CuttingCounter : BaseCounter
             }
             cuttingProcess++;
             animator.SetTrigger("Cut");
+            OnAnyCut?.Invoke(this, EventArgs.Empty);
             OnProcessChanged?.Invoke(this, new OnProgressChangedEventArgs() {
                 progressNormalized = (float) cuttingProcess/GetCuttingRecipeWithInput(GetKitchenObject().GetKitchenObjectSO()).cuttingAmount
             });

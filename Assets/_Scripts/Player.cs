@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public BaseCounter selectedCounter;
     }
+    public event EventHandler OnPlayerPick;
 
     [SerializeField] GameInput gameInput;
     
@@ -131,6 +132,12 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     public void SetKitchenObject(KitchenObject kitchenObject) {
         this.kitchenObject = kitchenObject;
+
+        if(kitchenObject != null) {
+            OnPlayerPick?.Invoke(this, EventArgs.Empty);
+        } else {
+            
+        }
     }
 
     public KitchenObject GetKitchenObject() {
