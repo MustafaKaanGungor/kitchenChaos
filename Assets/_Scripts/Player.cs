@@ -1,21 +1,16 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour, IKitchenObjectParent
+public class Player : NetworkBehaviour, IKitchenObjectParent
 {
-    public static Player Instance {get; private set;}
+    //public static Player Instance {get; private set;}
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged; 
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public BaseCounter selectedCounter;
     }
     public event EventHandler OnPlayerPick;
-
-    [SerializeField] GameInput gameInput;
     
     [SerializeField] private float moveSpeed = 10;
     [SerializeField] private float turnSpeed = 10;
@@ -35,12 +30,12 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private bool isWalking;
 
     private void Awake() {
-        Instance = this;
+        //Instance = this;
     }
 
     private void Start() {
-        gameInput.OnInteractAction += GameInput_OnInteractAction;
-        gameInput.OnAltInteractAction += GameInput_OnAltInteractAction;
+        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        GameInput.Instance.OnAltInteractAction += GameInput_OnAltInteractAction;
     }
 
     private void Update()
@@ -54,7 +49,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
 
     private void HandleMovement() {
-        Vector2 movementVector = gameInput.GetMovementVectorNormalized();
+        Vector2 movementVector = GameInput.Instance.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(movementVector.x, 0, movementVector.y);
 
         float moveDistance = moveSpeed * Time.deltaTime;
@@ -86,7 +81,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
 
     private void HandleInteractions() {
-        Vector2 movementVector = gameInput.GetMovementVectorNormalized();
+        Vector2 movementVector = GameInput.Instance.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(movementVector.x, 0, movementVector.y);
         if(moveDir != Vector3.zero) {
             lastInteractDir = moveDir;
