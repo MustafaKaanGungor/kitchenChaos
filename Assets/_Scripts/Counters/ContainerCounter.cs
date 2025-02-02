@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class ContainerCounter : BaseCounter
@@ -11,15 +12,18 @@ public class ContainerCounter : BaseCounter
         if(!HasKitchenObject() && !player.HasKitchenObject()) {
             KitchenObject.CreateKitchenObject(kitchenObjectSO, player);
             animator.SetTrigger("OpenClose");
-        } else {
-            if(player.HasKitchenObject()) {
-                if(player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
-                    if(plateKitchenObject.TryAddIngredient(kitchenObjectSO)) {
-                        animator.SetTrigger("OpenClose");
-                    }
-                }
-            }
+            InteractServerRpc();
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void InteractServerRpc() {
+        InteractClientRpc();
+    }
+
+    [ClientRpc]
+    private void InteractClientRpc() {
+        animator.SetTrigger("OpenClose");
+    }
+ 
 }

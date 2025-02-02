@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Player : NetworkBehaviour, IKitchenObjectParent
 {
-    //public static Player Instance {get; private set;}
+    public static Player LocalInstance {get; private set;}
 
+    public static event EventHandler OnAnyPlayerSpawned;
+    public static event EventHandler OnAnyPickedSomething;
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged; 
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public BaseCounter selectedCounter;
@@ -29,13 +31,21 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     
     private bool isWalking;
 
-    private void Awake() {
-        //Instance = this;
-    }
-
     private void Start() {
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnAltInteractAction += GameInput_OnAltInteractAction;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if(IsOwner) {
+            LocalInstance = this;
+        }
+        OnAnyPlayerSpawned?.Invoke(this, EventArgs.Empty);
+    }
+
+    public static void ResetStaticData() {
+        OnAnyPlayerSpawned = null;
     }
 
     private void Update()
@@ -139,6 +149,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
         if(kitchenObject != null) {
             OnPlayerPick?.Invoke(this, EventArgs.Empty);
+            OnAnyPickedSomething?.Invoke(this, EventArgs.Empty);
         } else {
             
         }
@@ -154,5 +165,9 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     public bool HasKitchenObject() {
         return kitchenObject != null;
+    }
+
+    public NetworkObject GetNetworkObject() {
+        return NetworkObject;
     }
 }
